@@ -10,7 +10,9 @@ pub struct Sequence {
 }
 impl Sequence {
     pub fn new() -> Self {
-        Self { moves: Vec::new() }
+        Self {
+            moves: Vec::with_capacity(8),
+        }
     }
     pub fn apply(&self, r#move: &Move) -> Self {
         let mut new_moves = self.moves.clone();

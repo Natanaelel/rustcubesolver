@@ -58,7 +58,7 @@ impl Cube {
         }
     }
 
-    pub fn rotate(&self, r#move: &Move) -> Self {
+    pub fn apply_move(&self, r#move: &Move) -> Self {
         match r#move.turns {
             r#move::Turn::RIGHT => self.rotate1(r#move),
             r#move::Turn::LEFT => self.rotate1(r#move).rotate1(r#move).rotate1(r#move),
@@ -96,7 +96,7 @@ impl Cube {
     pub fn apply(&self, scramble: &Sequence) -> Self {
         let mut new: Cube = self.clone();
         for r#move in scramble.into_iter() {
-            new = new.rotate(&r#move);
+            new = new.apply_move(&r#move);
         }
         new
     }
