@@ -38,15 +38,24 @@ impl Move {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
 pub enum Side {
-    UP,
-    DOWN,
-    FRONT,
-    BACK,
-    RIGHT,
-    LEFT,
+    UP = 0,
+    DOWN = 1,
+    FRONT = 2,
+    BACK = 3,
+    RIGHT = 4,
+    LEFT = 5,
 }
+
+// mod Side {
+//     pub const UP: usize = 0;
+//     pub const DOWN: usize = 1;
+//     pub const FRONT: usize = 2;
+//     pub const BACK: usize = 3;
+//     pub const RIGHT: usize = 4;
+//     pub const LEFT: usize = 5;
+// }
 
 #[derive(Debug, Clone)]
 pub enum Turn {

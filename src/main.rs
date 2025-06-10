@@ -9,7 +9,7 @@ use cube::Cube;
 
 fn main() {
     // let scramble = Sequence::random_scramble(5);
-    let scramble = Sequence::parse(String::from("R U R' U' R")).unwrap();
+    let scramble = Sequence::parse(String::from("R U R' U' R U")).unwrap();
     println!("Finding solution for {}", scramble);
 
     let start_time = Instant::now();
@@ -18,13 +18,14 @@ fn main() {
 
     if let Some(sequence) = solution {
         println!("Found solution in {:?}: {}", time_taken, sequence);
-        print_link(scramble, sequence);
+        print_link(&scramble, &sequence);
+        println!("{}", Cube::create_solved().apply(&scramble))
     } else {
         println!("Didn't find any solution");
     }
 }
 
-fn print_link(scramble: Sequence, solution: Sequence) {
+fn print_link(scramble: &Sequence, solution: &Sequence) {
     let setup: String = scramble.to_string().replace("'", "-").replace(" ", "_");
     let alg: String = solution.to_string().replace("'", "-").replace(" ", "_");
     println!("https://alg.cubing.net/?setup={setup}&alg={alg}");
