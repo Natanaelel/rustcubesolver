@@ -48,15 +48,6 @@ pub enum Side {
     LEFT = 5,
 }
 
-// mod Side {
-//     pub const UP: usize = 0;
-//     pub const DOWN: usize = 1;
-//     pub const FRONT: usize = 2;
-//     pub const BACK: usize = 3;
-//     pub const RIGHT: usize = 4;
-//     pub const LEFT: usize = 5;
-// }
-
 #[derive(Debug, Clone)]
 pub enum Turn {
     RIGHT = 1,
