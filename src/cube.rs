@@ -1,5 +1,6 @@
 pub mod color;
 pub mod r#move;
+pub mod simple_move;
 pub mod move_sequence;
 pub mod piece;
 
@@ -58,42 +59,13 @@ impl Cube {
         }
     }
 
-    pub fn apply_move(&self, r#move: &Move) -> Self {
-        match r#move.turns {
-            r#move::Turn::RIGHT => self.rotate1(r#move),
-            r#move::Turn::LEFT => self.rotate1(r#move).rotate1(r#move).rotate1(r#move),
-            r#move::Turn::TWO => self.rotate1(r#move).rotate1(r#move),
-        }
+    pub fn apply_move<T: Move>(&self, r#move: &T) -> Self {
+        r#move.apply(self)
     }
 
-    fn rotate1(&self, r#move: &Move) -> Self {
-        let corner_permutation = CORNER_PERMUTATION[r#move.side as usize];
-        let corner_rotation = CORNER_ORIENTATION[r#move.side as usize];
+    
 
-        let edge_permutation = EDGE_PERMUTATION[r#move.side as usize];
-        let edge_rotation = EDGE_ORIENTATION[r#move.side as usize];
-
-        let new_corner_permutation: [u8; 8] =
-            std::array::from_fn(|index| self.corner_permutation[corner_permutation[index]]);
-        let new_corner_orientation: [u8; 8] = std::array::from_fn(|index| {
-            (self.corner_orientation[corner_permutation[index]] + corner_rotation[index]) % 3
-        });
-
-        let new_edge_permutation: [u8; 12] =
-            std::array::from_fn(|index| self.edge_permutation[edge_permutation[index]]);
-        let new_edge_orientation: [u8; 12] = std::array::from_fn(|index| {
-            self.edge_orientation[edge_permutation[index]] ^ edge_rotation[index]
-        });
-
-        Self {
-            corner_permutation: new_corner_permutation,
-            corner_orientation: new_corner_orientation,
-            edge_permutation: new_edge_permutation,
-            edge_orientation: new_edge_orientation,
-        }
-    }
-
-    pub fn apply(&self, scramble: &Sequence) -> Self {
+    pub fn apply<T: Move>(&self, scramble: &Sequence<T>) -> Self {
         let mut new: Cube = self.clone();
         for r#move in scramble.into_iter() {
             new = new.apply_move(&r#move);
@@ -195,43 +167,3 @@ impl Display for Cube {
         )
     }
 }
-
-//ABCD EFGH IJKL MNOP QRST UVWX
-//0123 ____ ____ ____ ____ 4567
-static CORNER_PERMUTATION: [[usize; 8]; 6] = [
-    [1, 2, 3, 0, 4, 5, 6, 7],
-    [0, 1, 2, 3, 7, 4, 5, 6],
-    [3, 1, 2, 7, 0, 5, 6, 4],
-    [0, 5, 1, 3, 4, 6, 2, 7],
-    [4, 0, 2, 3, 5, 1, 6, 7],
-    [0, 1, 6, 2, 4, 5, 7, 3],
-];
-
-static CORNER_ORIENTATION: [[u8; 8]; 6] = [
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 0, 0, 2, 2, 0, 0, 1],
-    [0, 2, 1, 0, 0, 1, 2, 0],
-    [2, 1, 0, 0, 1, 2, 0, 0],
-    [0, 0, 2, 1, 0, 0, 1, 2],
-];
-
-//ABCD EFGH IJKL MNOP QRST UVWX
-//0123 _5_8 ____ _7_6 ____ 9012
-static EDGE_PERMUTATION: [[usize; 12]; 6] = [
-    [1, 2, 3, 0, 4, 5, 6, 7, 8, 9, 10, 11],
-    [0, 1, 2, 3, 4, 5, 6, 7, 11, 8, 9, 10],
-    [7, 1, 2, 3, 0, 5, 6, 8, 4, 9, 10, 11],
-    [0, 1, 5, 3, 4, 10, 2, 7, 8, 9, 6, 11],
-    [0, 4, 2, 3, 9, 1, 6, 7, 8, 5, 10, 11],
-    [0, 1, 2, 6, 4, 5, 11, 3, 8, 9, 10, 7],
-];
-
-static EDGE_ORIENTATION: [[u8; 12]; 6] = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0],
-    [0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-];

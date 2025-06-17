@@ -1,6 +1,6 @@
-use crate::cube::{Cube, r#move::ALL_MOVES, move_sequence::Sequence};
+use crate::cube::{Cube, r#move::Move, move_sequence::Sequence};
 
-pub fn solve(cube: Cube) -> Option<Sequence> {
+pub fn solve<T: Move>(cube: Cube) -> Option<Sequence<T>> {
     println!("trying to solve the cube {cube:?}");
 
     let solved = Cube::create_solved();
@@ -14,11 +14,11 @@ pub fn solve(cube: Cube) -> Option<Sequence> {
     }
 
     let iterations = 10;
-    for _ in 0..iterations {
+    for i in 1..=iterations {
         let mut next_iter = Vec::new();
-        println!("Searching {} states", iteration.len());
+        println!("Searching {} states, move {}", iteration.len(), i);
         for snapshot in &iteration {
-            for r#move in ALL_MOVES {
+            for r#move in T::all_moves() {
                 let state = Snapshot {
                     cube: snapshot.cube.apply_move(&r#move),
                     sequence: snapshot.sequence.apply(&r#move),
@@ -35,7 +35,7 @@ pub fn solve(cube: Cube) -> Option<Sequence> {
     None
 }
 
-struct Snapshot {
+struct Snapshot<T: Move> {
     cube: Cube,
-    sequence: Sequence,
+    sequence: Sequence<T>,
 }

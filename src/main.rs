@@ -7,9 +7,13 @@ use cube::move_sequence::Sequence;
 
 use cube::Cube;
 
+use crate::cube::simple_move::SimpleMove;
+
+type M = SimpleMove;
+
 fn main() {
     // let scramble = Sequence::random_scramble(5);
-    let scramble = Sequence::parse(String::from("R U R' U' R U")).unwrap();
+    let scramble: Sequence<SimpleMove> = String::from("R U R' U' R U").parse().unwrap();
     println!("Finding solution for {}", scramble);
 
     let start_time = Instant::now();
@@ -25,7 +29,7 @@ fn main() {
     }
 }
 
-fn print_link(scramble: &Sequence, solution: &Sequence) {
+fn print_link(scramble: &Sequence<M>, solution: &Sequence<M>) {
     let setup: String = scramble.to_string().replace("'", "-").replace(" ", "_");
     let alg: String = solution.to_string().replace("'", "-").replace(" ", "_");
     println!("https://alg.cubing.net/?setup={setup}&alg={alg}");

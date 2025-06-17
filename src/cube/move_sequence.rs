@@ -1,40 +1,45 @@
-use std::fmt::Display;
+use std::{fmt::Display, str::FromStr};
 
-use crate::cube::r#move::{Side, Turn};
+use rand::distr::{Distribution, StandardUniform};
 
-use super::r#move::Move;
+use crate::cube::r#move::Move;
 
 #[derive(Debug)]
-pub struct Sequence {
-    moves: Vec<Move>,
+pub struct Sequence<T: Move> {
+    moves: Vec<T>,
 }
-impl Sequence {
+impl<T: Move> Sequence<T> {
     pub fn new() -> Self {
         Self {
             moves: Vec::with_capacity(8),
         }
     }
-    pub fn apply(&self, r#move: &Move) -> Self {
+    pub fn apply(&self, r#move: &T) -> Self {
         let mut new_moves = self.moves.clone();
         new_moves.push(r#move.clone());
         Self { moves: new_moves }
     }
-    pub fn invert(&self) -> Self {
-        Sequence {
-            moves: self.into_iter().rev().map(|m| m.invert()).collect(),
-        }
-    }
-    pub fn parse(input: String) -> Option<Sequence> {
-        Some(Sequence {
+    // pub fn invert(&self) -> Self {
+    //     Sequence {
+    //         moves: self.into_iter().rev().map(|m| m.invert()).collect(),
+    //     }
+    // }
+}
+
+impl<T: Move + FromStr> FromStr for Sequence<T> {
+    type Err = <T as FromStr>::Err;
+
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        Ok(Sequence {
             moves: input
                 .split(' ')
-                .map(|s| Move::parse(s.to_string()))
-                .collect::<Option<Vec<Move>>>()?,
+                .map(|s| s.parse::<T>())
+                .collect::<Result<Vec<T>, Self::Err>>()?,
         })
     }
 }
 
-impl Display for Sequence {
+impl<T: Move + Display> Display for Sequence<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.write_str(
             self.into_iter()
@@ -46,8 +51,8 @@ impl Display for Sequence {
     }
 }
 
-impl IntoIterator for &Sequence {
-    type Item = Move;
+impl<T: Move> IntoIterator for &Sequence<T> {
+    type Item = T;
 
     type IntoIter = std::vec::IntoIter<Self::Item>;
 
@@ -56,24 +61,15 @@ impl IntoIterator for &Sequence {
     }
 }
 
-impl Sequence {
-    pub fn random_scramble(len: u32) -> Sequence {
-        // Sequence::new()
-        let mut moves: Vec<Move> = Vec::new();
+impl<T: Move> Sequence<T> {
+    pub fn random_scramble(len: u32) -> Sequence<T>
+    where
+        StandardUniform: Distribution<T>,
+    {
+        let mut moves: Vec<T> = Vec::new();
 
         for _ in 0..len {
-            let side: Side = [
-                Side::UP,
-                Side::DOWN,
-                Side::FRONT,
-                Side::BACK,
-                Side::RIGHT,
-                Side::LEFT,
-            ][rand::random_range(0..6)]
-            .to_owned();
-            let turns: Turn =
-                [Turn::LEFT, Turn::RIGHT, Turn::TWO][rand::random_range(0..3)].to_owned();
-            moves.push(Move { side, turns })
+            moves.push(rand::random())
         }
 
         Sequence { moves }
