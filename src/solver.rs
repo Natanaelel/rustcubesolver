@@ -16,10 +16,13 @@ pub fn solve<T: Move>(cube: Cube) -> Option<Sequence<T>> {
     let iterations = 10;
     for i in 1..=iterations {
         let mut next_iter = Vec::new();
-        println!("Searching {} states, move {}", iteration.len(), i);
+
+        let size = std::mem::size_of_val(&*iteration);
+        println!("Searching {} states, move {} ({} bytes)", iteration.len(), i, size);
+
         for snapshot in &iteration {
             for r#move in T::all_moves() {
-                let state = Snapshot {
+            let state = Snapshot {
                     cube: snapshot.cube.apply_move(&r#move),
                     sequence: snapshot.sequence.apply(&r#move),
                 };

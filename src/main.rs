@@ -8,12 +8,18 @@ use cube::move_sequence::Sequence;
 use cube::Cube;
 
 use crate::cube::simple_move::SimpleMove;
+use crate::cube::fast_move::FastMove;
+
+
+
+
+
 
 type M = SimpleMove;
 
 fn main() {
     // let scramble = Sequence::random_scramble(5);
-    let scramble: Sequence<SimpleMove> = String::from("R U R' U' R U").parse().unwrap();
+    let scramble: Sequence<M> = String::from("R U R' U' R U").parse().unwrap();
     println!("Finding solution for {}", scramble);
 
     let start_time = Instant::now();

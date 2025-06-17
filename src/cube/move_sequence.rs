@@ -11,7 +11,7 @@ pub struct Sequence<T: Move> {
 impl<T: Move> Sequence<T> {
     pub fn new() -> Self {
         Self {
-            moves: Vec::with_capacity(8),
+            moves: Vec::new(),
         }
     }
     pub fn apply(&self, r#move: &T) -> Self {

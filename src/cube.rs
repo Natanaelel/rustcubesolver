@@ -1,6 +1,7 @@
 pub mod color;
 pub mod r#move;
 pub mod simple_move;
+pub mod fast_move;
 pub mod move_sequence;
 pub mod piece;
 
